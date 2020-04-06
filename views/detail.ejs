@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <title>Místnosti - Detail</title>
+    <link rel="stylesheet" type="text/css" href="/styles/style.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="navigation">
+    <a class="logo" href="/">IntelliHouse</a>
+    <ul>
+        <li><a href="/rooms" class="selectedCard">Místnosti</a></li>
+        <li><a href="/statistics">Statistiky</a></li>
+    </ul>
+</div>
+
+<div class="aside">
+    <ul class="rooms">
+        <% for (room of rooms) { %>
+            <% if (room._id.equals(selectedRoom._id)) { %>
+                <li><a class="selectedRoom"><%= room.name %></a></li>
+            <% } else { %>
+                <li><a href="/rooms/<%= room._id %>"><%= room.name %></a></li>
+            <% } %>
+        <% } %>
+    </ul>
+
+    <ul class="buttons">
+        <li><a id="addRoom">+</a></li>
+        <li><a id="delRoom">-</a></li>
+    </ul>
+</div>
+
+<div class="details">
+    <h2><%= selectedRoom.name %></h2> 
+
+    <p>
+        <span class="col-45">Teplota:</span>
+        <span id="temperature"><%= selectedRoom.temperature %></span>° C
+    </p>
+    <p>
+        <span class="col-45">Spotřeba:</span> 
+        <span id="consumption"><%= selectedRoom.consumption %></span> kWh
+    </p>
+    <div>
+        <span class="col-45">Světlo:</span>
+        <% if (selectedRoom.lightsOn) { %>
+            <button id="lightsOn" type="button" class="active">Zapnuto</button>
+            <button id="lightsOff" type="button">Vypnuto</button>
+        <% } else { %>
+            <button id="lightsOn" type="button">Zapnuto</button>
+            <button id="lightsOff" type="button" class="active">Vypnuto</button>
+        <% } %>
+    </div>
+    <div>
+        <span class="col-45">Vytápění:</span>
+        <% if (selectedRoom.heatingOn) { %>
+            <button id="heatingOn" type="button" class="active">Zapnuto</button>
+            <button id="heatingOff" type="button">Vypnuto</button>
+        <% } else { %>
+            <button id="heatingOn" type="button">Zapnuto</button>
+            <button id="heatingOff" type="button" class="active">Vypnuto</button>
+        <% } %>
+
+    </div>
+    <% if (selectedRoom.heatingOn) { %> 
+    <div id="heating">
+    <% } else { %>
+    <div id="heating" class="invisible">
+    <% } %>  
+        <span class="col-45">Teplota vytápění:</span>
+        <span id="heatingTemp"><%= selectedRoom.heatingTemp %></span>° C
+
+        <span class="col-45"></span>
+        <input id="heatingSlider" type="range" min="5" max="30" value="20">
+    </div>
+    <div>
+        <span>Průměrná doba svícení za poslední týden:</span>
+        
+        <table>
+        <tr>
+        <% const length = selectedRoom.avgLightingLastWeek.length; %> 
+        <% for (let i = 1; i <= length; i++) { %>
+            <th><%= i %></th>
+        <% } %>
+        </tr>
+        <tr>
+        <% for (timePerDay of selectedRoom.avgLightingLastWeek) { %>
+            <td><%= timePerDay %></td>
+        <% } %>
+        </tr>
+        </table>
+    </div>
+
+    <a href="#">Přejmenovat</a>
+</div>
+
+
+<script src="/controllers/detail.js"></script>
+
+</body>
+</html>

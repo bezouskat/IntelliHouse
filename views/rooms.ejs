@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <title>Místnosti</title>
+    <link rel="stylesheet" type="text/css" href="/styles/style.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="navigation">
+    <a class="logo" href="/">IntelliHouse</a>
+    <ul>
+        <li><a href="/rooms" class="selectedCard">Místnosti</a></li>
+        <li><a href="/statistics" >Statistiky</a></li>
+    </ul>
+</div>
+
+<div class="aside">
+    <ul class="rooms">
+        <% for (room of rooms) { %>
+            <li><a href="/rooms/<%= room._id %>"><%= room.name %></a></li>
+        <% } %>
+    </ul>
+
+    <ul class="buttons">
+        <li><a id="addRoom">+</a></li>
+        <li><a id="delRoom">-</a></li>
+    </ul>
+</div>
+
+<div class="details">
+    <p>Vlevo vidíte seznam dostupných místností.</p>
+    <p>Kliknutím na jednu z nich
+       se zobrazí detail, který obsahuje bližší informace o dané místnosti
+       a rozhraní pro ovládání inteligentních prvků Vaší domácnosti.
+    </p>
+</div>
+
+<script src="/controllers/rooms.js"></script>
+
+</body>
+</html>
