@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Místnosti - Detail</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/styles/style.css">
-    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -37,15 +37,15 @@
     <h2><%= selectedRoom.name %></h2> 
 
     <p>
-        <span class="col-45">Teplota:</span>
+        <span class="width-fifty">Teplota:</span>
         <span id="temperature"><%= selectedRoom.temperature %></span>° C
     </p>
     <p>
-        <span class="col-45">Spotřeba:</span> 
+        <span class="width-fifty">Spotřeba:</span> 
         <span id="consumption"><%= selectedRoom.consumption %></span> kWh
     </p>
     <div>
-        <span class="col-45">Světlo:</span>
+        <span class="width-fifty">Světlo:</span>
         <% if (selectedRoom.lightsOn) { %>
             <button id="lightsOn" type="button" class="active">Zapnuto</button>
             <button id="lightsOff" type="button">Vypnuto</button>
@@ -55,7 +55,7 @@
         <% } %>
     </div>
     <div>
-        <span class="col-45">Vytápění:</span>
+        <span class="width-fifty">Vytápění:</span>
         <% if (selectedRoom.heatingOn) { %>
             <button id="heatingOn" type="button" class="active">Zapnuto</button>
             <button id="heatingOff" type="button">Vypnuto</button>
@@ -70,10 +70,10 @@
     <% } else { %>
     <div id="heating" class="invisible">
     <% } %>  
-        <span class="col-45">Teplota vytápění:</span>
+        <span class="width-fifty">Teplota vytápění:</span>
         <span id="heatingTemp"><%= selectedRoom.heatingTemp %></span>° C
 
-        <span class="col-45"></span>
+        <span class="width-fifty"></span>
         <input id="heatingSlider" type="range" min="5" max="30" value="20">
     </div>
     <div>
