@@ -47,7 +47,7 @@ app.post("/rooms", (req, res) => {
         consumption: 0,
         lightsOn: false,
         heatingOn: false,
-        heatingTemp: 0,
+        heatingTemp: 5,
         avgLightingLastWeek: [0, 0, 0, 0, 0, 0, 0]
     }).then(newRoom => {
         res.json({newRoomId: newRoom._id.toString()});
