@@ -3,14 +3,12 @@ const delRoom = document.getElementById("delRoom");
 
 addRoom.addEventListener("click", () => {
     fetch("/rooms", {
-        method: "POST",
+        method: "POST"
     })
     .then(res => res.json())
     .then(data => {
-        newRoomId = data.newRoomId;
-        window.location.replace("/rooms/" + newRoomId)
-    })
-    .catch(err => console.log(err));
+        window.location.replace("/rooms/" + data.id)
+    });
 });
 
 delRoom.addEventListener("click", () => {

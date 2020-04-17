@@ -149,7 +149,20 @@ h2 {
 .details button {
     font-size: 0.8em;
     font-weight: 600;
-    border: none;
+    border: 2px solid var(--secondary-color);
+    cursor: pointer;
+    padding: 4px 10px;
+    background-color: var(--secondary-color);
+    color: white;
+    letter-spacing: 1px;
+    margin-left: 3px;
+}
+.details button:hover:not(.radioBtn) {
+    opacity: 0.8;
+}
+.details .radioBtn {
+    font-size: 0.8em;
+    font-weight: 600;
     border-radius: 5px;
     background-color: white;
     border: 2px solid var(--secondary-color);
@@ -159,11 +172,11 @@ h2 {
     outline: none;
     cursor: pointer;
 }
-.details button:hover {
+.details .radioBtn:hover {
     color: white;
     background-color: var(--secondary-color);
 }
-.details .active {
+.details .radioBtn.active {
     color: white;
     background-color: var(--secondary-color);
     cursor: auto;
@@ -206,6 +219,15 @@ h2 {
     float: right;
     color: red;
     text-decoration: none;
+}
+.details input[type=text] {
+    font-size: 0.8em;
+    border: 2px solid var(--secondary-color);
+    padding: 4px 10px;
+}
+.details input[type=text]:focus {
+    outline: none;
+    border: 2px solid var(--selected-color);
 }
 
 /* STATISTICS */

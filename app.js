@@ -14,6 +14,8 @@ mongoose.connect("mongodb://localhost/SWINZ", {
 });
 mongoose.set('useFindAndModify', false);
 
+const Requests = require('./requests');
+
 app.get("/", (req, res) => {
     res.render("index");
 });
@@ -29,11 +31,22 @@ app.get("/rooms/:id", (req, res) => {
     .then(rooms => {
         for (let room of rooms) {
             if (room._id.toString().localeCompare(req.params.id) == 0) {
-                const selectedRoom = room;
-                
-                return res.render("detail", {
-                    rooms: rooms, selectedRoom: selectedRoom
+                let lights = null;
+                let thermostat = null;
+
+                Requests.getLights(room.lightsId)
+                .then(data => lights = data)
+                .then(() => Requests.getThermostat(room.thermostatId))
+                .then(data => thermostat = data)
+                .then(() => {
+                    res.render("detail", {
+                        rooms: rooms, 
+                        selectedRoom: room,
+                        thermostat: thermostat,
+                        lights: lights
+                    });
                 });
+
             }
         }
     })
@@ -41,29 +54,70 @@ app.get("/rooms/:id", (req, res) => {
 });
 
 app.post("/rooms", (req, res) => {
-    Room.create({
-        name: "Nová místnost",
-        temperature: 18,
-        consumption: 0,
-        lightsOn: false,
-        heatingOn: false,
-        heatingTemp: 5,
-        avgLightingLastWeek: [0, 0, 0, 0, 0, 0, 0]
-    }).then(newRoom => {
-        res.json({newRoomId: newRoom._id.toString()});
-    })
-    .catch(err => console.log(err));
+    let newLightsId = -1; 
+    let newThermostatId = -1;
+
+    Requests.newLights()
+    .then(id => newLightsId = id)
+    .then(() => Requests.newThermostat())
+    .then(id => newThermostatId = id)
+    .then(() => {
+        Room.create({
+            name: 'Nová místnost',
+            thermostatId: newThermostatId,
+            lightsId: newLightsId
+        }).then(newRoom => {
+    
+            res.json({"id": newRoom._id.toString()});
+        })
+    });
 }) 
 
 app.delete("/rooms/:id", (req, res) => {
-    Room.deleteOne({_id: req.params.id})
-    .then(res.sendStatus(200));
+    Room.findOne({_id: req.params.id}, (err, room) => {
+        Requests.deleteLights(room.lightsId)
+        .then(msg => console.log(msg));
+
+        Requests.deleteThermostat(room.thermostatId)
+        .then(msg => console.log(msg));
+
+        Room.deleteOne(room)
+        .then(res.sendStatus(200));
+    });
 });
 
 app.put("/rooms/:id", (req, res) => {
-    Room.findOneAndUpdate({_id: req.params.id}, req.body)
-    .then(res.sendStatus(200))
-    .catch(err => console.log(err));
+    Room.findOne({_id: req.params.id}, (err, room) => {
+        const lightsId = room.lightsId;
+        const thermostatId = room.thermostatId;
+        const type = req.body.type;
+        
+        if (typeof type == "string") {
+            switch (type) {
+                case "lightsOn": 
+                    Requests.setLights(lightsId, true);  
+                    break;
+                case "lightsOff": 
+                    Requests.setLights(lightsId, false); 
+                    break; 
+                case "thermostatOn": 
+                    Requests.setThermostat(thermostatId, true); 
+                    break;
+                case "thermostatOff": 
+                    Requests.setThermostat(thermostatId, false);
+                    break;
+                case "setThermostatTemp":
+                    Requests.setThermostatTemp(thermostatId, req.body.value);    
+                break;
+                case "newName":
+                    room.name = req.body.value;
+                    room.save();
+                    break;
+            }
+        }
+
+        res.sendStatus(200);
+    });
 });
 
 app.get("/statistics", (req, res) => {
@@ -76,6 +130,6 @@ app.get("/statistics", (req, res) => {
     });
 });
 
-app.listen(8080, () => {
-    console.log("Listening on port 8080...");
+app.listen(8000, () => {
+    console.log("Listening on port 8000...");
 });
