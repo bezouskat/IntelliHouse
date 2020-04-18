@@ -16,14 +16,15 @@ mongoose.set('useFindAndModify', false);
 
 const Requests = require('./requests');
 
+setInterval(Requests.updateAllDevices, 1000);
+
 app.get("/", (req, res) => {
     res.render("index");
 });
 
 app.get("/rooms", (req, res) => {
     Room.find({})
-    .then(rooms => res.render("rooms", {rooms: rooms}))
-    .catch(err => console.log(err));
+    .then(rooms => res.render("rooms", {rooms: rooms}));
 });
 
 app.get("/rooms/:id", (req, res) => {
@@ -49,8 +50,37 @@ app.get("/rooms/:id", (req, res) => {
 
             }
         }
-    })
-    .catch(err => console.log(err));
+    });
+});
+
+app.get("/rooms/:id/values", (req, res) => {
+    Room.findOne({_id: req.params.id}, (err, room) => {
+        let temp = 0;
+        let consumption = 0;
+        
+        Requests.getLights(room.lightsId)
+        .then(lights => consumption += lights.consumption)
+        .then(() => Requests.getThermostat(room.thermostatId))
+        .then(thermostat => {
+            temp = thermostat.currentTemp;
+            consumption += thermostat.consumption;
+        })
+        .then(() => {
+            res.json({"temp": temp, "consumption": consumption});
+        });
+    });
+});
+
+app.get("/statistics", (req, res) => {
+    Room.find({}, (err, rooms) => {
+        if (err) {
+            console.log(err);
+        } else {
+            res.render("statistics.ejs", {
+                rooms: rooms
+            });
+        }
+    });
 });
 
 app.post("/rooms", (req, res) => {
@@ -75,11 +105,8 @@ app.post("/rooms", (req, res) => {
 
 app.delete("/rooms/:id", (req, res) => {
     Room.findOne({_id: req.params.id}, (err, room) => {
-        Requests.deleteLights(room.lightsId)
-        .then(msg => console.log(msg));
-
-        Requests.deleteThermostat(room.thermostatId)
-        .then(msg => console.log(msg));
+        Requests.deleteLights(room.lightsId);
+        Requests.deleteThermostat(room.thermostatId);
 
         Room.deleteOne(room)
         .then(res.sendStatus(200));
@@ -117,16 +144,6 @@ app.put("/rooms/:id", (req, res) => {
         }
 
         res.sendStatus(200);
-    });
-});
-
-app.get("/statistics", (req, res) => {
-    Room.find({}, (err, rooms) => {
-        if (err) {
-            console.log(err);
-        } else {
-            res.render("statistics.ejs", {rooms: rooms});
-        }
     });
 });
 

@@ -118,3 +118,14 @@ function setThermostatTemp(id, temp) {
 }
 
 exports.setThermostatTemp = setThermostatTemp;
+
+function updateAllDevices() {
+    return fetch(`http://localhost:3001/lights`, {
+        method: "PUT"
+    })
+    .then(() => fetch(`http://localhost:3001/thermostats`, {
+        method: "PUT"
+    }));
+}
+
+exports.updateAllDevices = updateAllDevices;

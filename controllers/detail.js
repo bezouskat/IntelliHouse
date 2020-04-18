@@ -10,8 +10,7 @@ function setLights(type) {
         body: JSON.stringify({
             type: type
         })
-    })
-    .catch(err => console.log(err));
+    });
 }
 
 lightsOn.addEventListener("click", () => {
@@ -47,8 +46,7 @@ function setThermostat(type) {
         body: JSON.stringify({
             type: type
         })
-    })
-    .catch(err => console.log(err));
+    });
 }
 
 heatingOn.addEventListener("click", () => {
@@ -85,8 +83,7 @@ function setThermostatTemp(value) {
             type: "setThermostatTemp",
             value: value
         })
-    })
-    .catch(err => console.log(err));
+    });
 }
 
 heatingSlider.addEventListener("mouseup", () => {
@@ -128,8 +125,7 @@ addRoom.addEventListener("click", () => {
     .then(res => res.json())
     .then(data => {
         window.location.replace("/rooms/" + data.id);
-    })
-    .catch(err => console.log(err));
+    });
 });
 
 delRoom.addEventListener("click", () => {
@@ -139,7 +135,23 @@ delRoom.addEventListener("click", () => {
         fetch(window.location.pathname, {
             method: "DELETE",
         })
-        .then(window.location.replace("/rooms"))
-        .catch(err => console.log(err));
+        .then(window.location.replace("/rooms"));
     }
 });
+
+const update = setInterval(updateValues, 1000);
+
+let temp = document.getElementById("temp");
+let consumption = document.getElementById("consumption");
+
+function updateValues() {
+    fetch(window.location.pathname + "/values", {
+        method: "GET"
+    })
+    .then(res => res.json())
+    .then(values => {
+        temp.innerHTML = values.temp;
+        consumption.innerHTML = values.consumption;
+    })
+    .catch(err => clearInterval(update));
+}

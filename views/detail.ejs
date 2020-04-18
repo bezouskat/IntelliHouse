@@ -38,11 +38,13 @@
 
     <p>
         <span class="width-fifty">Teplota:</span>
-        <span><%= thermostat.currentTemp %></span>° C
+        <span id="temp"><%= thermostat.currentTemp %></span>° C
     </p>
     <p>
         <span class="width-fifty">Spotřeba:</span> 
-        <span><%= lights.consumption + thermostat.consumption%></span> Wh
+        <span id="consumption">
+            <%= lights.consumption + thermostat.consumption%>
+        </span> Wh
     </p>
     <div>
         <span class="width-fifty">Světlo:</span>
@@ -55,7 +57,7 @@
         <% } %>
     </div>
     <div>
-        <span class="width-fifty">Vytápění:</span>
+        <span class="width-fifty">Termostat:</span>
         <% if (thermostat.isOn) { %>
             <button class="radioBtn active" id="heatingOn" type="button">Zapnuto</button>
             <button class="radioBtn" id="heatingOff" type="button">Vypnuto</button>
@@ -70,7 +72,7 @@
     <% } else { %>
     <div id="heating" class="invisible">
     <% } %>  
-        <span class="width-fifty">Teplota vytápění:</span>
+        <span class="width-fifty"></span>
         <span id="heatingTemp"><%= thermostat.heatingTemp %></span>° C
 
         <span class="width-fifty"></span>
@@ -87,7 +89,6 @@
         <button id="renameRoom" type="button">Přejmenovat</button>
     </div>
 </div>
-
 
 <script src="/controllers/detail.js"></script>
 

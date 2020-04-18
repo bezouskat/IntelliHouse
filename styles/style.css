@@ -9,8 +9,8 @@
 
     --navigation-height: 60px;
     --aside-btn-height: 40px;
-    --body-width: 850px;
-    --aside-width: 300px;
+    --body-width: 750px;
+    --aside-width: 250px;
 }
 body {
     margin: 0 auto;
