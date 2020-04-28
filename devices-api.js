@@ -39,24 +39,20 @@ exports.newThermostat = newThermostat;
 
 function getLights(id) {
     return fetch(`http://localhost:3001/lights/${id}`, {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json"
-        }
+        method: "GET"
     })
-    .then(res => res.json());
+    .then(res => res.json())
+    .catch(err => console.log('Failed to find the lights.'));
 }
 
 exports.getLights = getLights;
 
 function getThermostat(id) {
     return fetch(`http://localhost:3001/thermostats/${id}`, {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json"
-        }
+        method: "GET"
     })
-    .then(res => res.json());
+    .then(res => res.json())
+    .catch(err => console.log('Failed to find the thermostat.'));
 }
 
 exports.getThermostat = getThermostat;

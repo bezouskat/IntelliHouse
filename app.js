@@ -1,8 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
-
-const Room = require("./models/room");
+const devicesApi = require('./devices-api');
 
 const app = express();
 app.set("view engine", "ejs");
@@ -14,9 +13,9 @@ mongoose.connect("mongodb://localhost/SWINZ", {
 });
 mongoose.set('useFindAndModify', false);
 
-const Requests = require('./requests');
+const Room = require("./models/room");
 
-setInterval(Requests.updateAllDevices, 1000);
+setInterval(devicesApi.updateAllDevices, 1000);
 
 app.get("/", (req, res) => {
     res.render("index");
@@ -24,7 +23,9 @@ app.get("/", (req, res) => {
 
 app.get("/rooms", (req, res) => {
     Room.find({})
-    .then(rooms => res.render("rooms", {rooms: rooms}));
+    .then(rooms => {
+        res.render("rooms", {rooms: rooms})
+    });
 });
 
 app.get("/rooms/:id", (req, res) => {
@@ -35,9 +36,9 @@ app.get("/rooms/:id", (req, res) => {
                 let lights = null;
                 let thermostat = null;
 
-                Requests.getLights(room.lightsId)
+                devicesApi.getLights(room.lightsId)
                 .then(data => lights = data)
-                .then(() => Requests.getThermostat(room.thermostatId))
+                .then(() => devicesApi.getThermostat(room.thermostatId))
                 .then(data => thermostat = data)
                 .then(() => {
                     res.render("detail", {
@@ -47,25 +48,29 @@ app.get("/rooms/:id", (req, res) => {
                         lights: lights
                     });
                 });
-
             }
         }
     });
 });
 
 app.get("/rooms/:id/values", (req, res) => {
-    Room.findOne({_id: req.params.id}, (err, room) => {
+    Room.findOne({_id: req.params.id})
+    .then((room) => {
         let temp = 0;
         let consumption = 0;
         
-        Requests.getLights(room.lightsId)
+        devicesApi.getLights(room.lightsId)
         .then(lights => {
-            consumption += Math.round(lights.consumption * lights.time / 60);
+            if (lights) {
+                consumption += Math.round(lights.consumption * lights.time / 60);
+            }
         })
-        .then(() => Requests.getThermostat(room.thermostatId))
+        .then(() => devicesApi.getThermostat(room.thermostatId))
         .then(thermostat => {
-            temp = thermostat.currentTemp;
-            consumption += thermostat.consumption;
+            if (thermostat) {
+                temp = thermostat.currentTemp;
+                consumption += thermostat.consumption;
+            }
         })
         .then(() => {
             res.json({"temp": temp, "consumption": consumption});
@@ -74,14 +79,11 @@ app.get("/rooms/:id/values", (req, res) => {
 });
 
 app.get("/statistics", (req, res) => {
-    Room.find({}, (err, rooms) => {
-        if (err) {
-            console.log(err);
-        } else {
-            res.render("statistics.ejs", {
-                rooms: rooms
-            });
-        }
+    Room.find({})
+    .then(rooms => {
+        res.render("statistics.ejs", {
+            rooms: rooms
+        });
     });
 });
 
@@ -89,60 +91,59 @@ app.post("/rooms", (req, res) => {
     let newLightsId = -1; 
     let newThermostatId = -1;
 
-    Requests.newLights()
+    devicesApi.newLights()
     .then(id => newLightsId = id)
-    .then(() => Requests.newThermostat())
+    .then(() => devicesApi.newThermostat())
     .then(id => newThermostatId = id)
     .then(() => {
         Room.create({
             name: 'Nová místnost',
             thermostatId: newThermostatId,
             lightsId: newLightsId
-        }).then(newRoom => {
-    
+        })
+        .then(newRoom => {
             res.json({"id": newRoom._id.toString()});
         })
     });
 }) 
 
 app.delete("/rooms/:id", (req, res) => {
-    Room.findOne({_id: req.params.id}, (err, room) => {
-        Requests.deleteLights(room.lightsId)
-        .then(() => Requests.deleteThermostat(room.thermostatId))
+    Room.findOne({_id: req.params.id})
+    .then(room => {
+        devicesApi.deleteLights(room.lightsId)
+        .then(() => devicesApi.deleteThermostat(room.thermostatId))
         .then(() => Room.deleteOne(room))
         .then(() => res.sendStatus(200));
     });
 });
 
 app.put("/rooms/:id", (req, res) => {
-    Room.findOne({_id: req.params.id}, (err, room) => {
+    Room.findOne({_id: req.params.id})
+    .then(room => {
         const lightsId = room.lightsId;
         const thermostatId = room.thermostatId;
-        const type = req.body.type;
         
-        if (typeof type == "string") {
-            switch (type) {
-                case "lightsOn": 
-                    Requests.setLights(lightsId, true);  
-                    break;
-                case "lightsOff": 
-                    Requests.setLights(lightsId, false); 
-                    break; 
-                case "thermostatOn": 
-                    Requests.setThermostat(thermostatId, true); 
-                    break;
-                case "thermostatOff": 
-                    Requests.setThermostat(thermostatId, false);
-                    break;
-                case "setThermostatTemp":
-                    Requests.setThermostatTemp(thermostatId, req.body.value);    
-                    break;
-                case "newName":
-                    room.name = req.body.value;
-                    room.save();
-                    break;
+        switch (req.body.type) {
+            case "lightsOn": 
+                devicesApi.setLights(lightsId, true);  
+                break;
+            case "lightsOff": 
+                devicesApi.setLights(lightsId, false); 
+                break; 
+            case "thermostatOn": 
+                devicesApi.setThermostat(thermostatId, true); 
+                break;
+            case "thermostatOff": 
+                devicesApi.setThermostat(thermostatId, false);
+                break;
+            case "setThermostatTemp":
+                devicesApi.setThermostatTemp(thermostatId, req.body.value);    
+                break;
+            case "newName":
+                room.name = req.body.value;
+                room.save();
+                break;
             }
-        }
 
         res.sendStatus(200);
     });
