@@ -59,7 +59,9 @@ app.get("/rooms/:id/values", (req, res) => {
         let consumption = 0;
         
         Requests.getLights(room.lightsId)
-        .then(lights => consumption += lights.consumption)
+        .then(lights => {
+            consumption += Math.round(lights.consumption * lights.time / 60);
+        })
         .then(() => Requests.getThermostat(room.thermostatId))
         .then(thermostat => {
             temp = thermostat.currentTemp;
@@ -105,11 +107,10 @@ app.post("/rooms", (req, res) => {
 
 app.delete("/rooms/:id", (req, res) => {
     Room.findOne({_id: req.params.id}, (err, room) => {
-        Requests.deleteLights(room.lightsId);
-        Requests.deleteThermostat(room.thermostatId);
-
-        Room.deleteOne(room)
-        .then(res.sendStatus(200));
+        Requests.deleteLights(room.lightsId)
+        .then(() => Requests.deleteThermostat(room.thermostatId))
+        .then(() => Room.deleteOne(room))
+        .then(() => res.sendStatus(200));
     });
 });
 
@@ -135,7 +136,7 @@ app.put("/rooms/:id", (req, res) => {
                     break;
                 case "setThermostatTemp":
                     Requests.setThermostatTemp(thermostatId, req.body.value);    
-                break;
+                    break;
                 case "newName":
                     room.name = req.body.value;
                     room.save();

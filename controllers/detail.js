@@ -135,7 +135,7 @@ delRoom.addEventListener("click", () => {
         fetch(window.location.pathname, {
             method: "DELETE",
         })
-        .then(window.location.replace("/rooms"));
+        .then(() => window.location.replace("/rooms"));
     }
 });
 
