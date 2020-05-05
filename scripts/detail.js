@@ -107,9 +107,7 @@ renameRoom.addEventListener("click", () => {
                 value: name
             })
         })
-        .then(() => {
-            window.location.replace(window.location.pathname);
-        });
+        .then(() => window.location.replace(window.location.pathname));
     } else {
         alert("Pole pro název je prázdné.");
     }
