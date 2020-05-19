@@ -1,6 +1,6 @@
 const fetch = require("node-fetch");
 
-function newLights() {
+function newLight() {
     return fetch("http://localhost:3001/lights", {
         method: "POST",
         headers: {
@@ -16,7 +16,7 @@ function newLights() {
     .then(data => data.id);
 }
 
-exports.newLights = newLights;
+exports.newLight = newLight;
 
 function newThermostat() {
     return fetch("http://localhost:3001/thermostats", {
@@ -37,7 +37,7 @@ function newThermostat() {
 
 exports.newThermostat = newThermostat;
 
-function getLights(id) {
+function getLight(id) {
     return fetch(`http://localhost:3001/lights/${id}`, {
         method: "GET"
     })
@@ -45,7 +45,7 @@ function getLights(id) {
     .catch(err => console.log('Failed to find the lights.'));
 }
 
-exports.getLights = getLights;
+exports.getLight = getLight;
 
 function getThermostat(id) {
     return fetch(`http://localhost:3001/thermostats/${id}`, {
@@ -57,13 +57,13 @@ function getThermostat(id) {
 
 exports.getThermostat = getThermostat;
 
-function deleteLights(id) {
+function deleteLight(id) {
     return fetch(`http://localhost:3001/lights/${id}`, {
         method: "DELETE"
     });
 }
 
-exports.deleteLights = deleteLights;
+exports.deleteLight = deleteLight;
 
 function deleteThermostat(id) {
     return fetch(`http://localhost:3001/thermostats/${id}`, {
@@ -73,7 +73,7 @@ function deleteThermostat(id) {
 
 exports.deleteThermostat = deleteThermostat;
 
-function setLights(id, ison) {
+function setLight(id, ison) {
     return fetch(`http://localhost:3001/lights/${id}/ison`, {
         method: "PUT",
         headers: {
@@ -85,7 +85,7 @@ function setLights(id, ison) {
     });
 }
 
-exports.setLights = setLights;
+exports.setLight = setLight;
 
 function setThermostat(id, ison) {
     return fetch(`http://localhost:3001/thermostats/${id}/ison`, {

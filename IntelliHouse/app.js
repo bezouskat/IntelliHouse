@@ -7,7 +7,7 @@ app.set("view engine", "ejs");
 app.use(bodyParser.json());
 app.use(express.static(__dirname));
 
-mongoose.connect("mongodb://localhost/SWINZ", {
+mongoose.connect("mongodb://localhost/IntelliHouse", {
     useNewUrlParser: true, useUnifiedTopology: true
 });
 mongoose.set('useFindAndModify', false);

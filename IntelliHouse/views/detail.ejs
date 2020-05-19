@@ -43,12 +43,12 @@
     <p>
         <span class="width-fifty">Spotřeba:</span> 
         <span id="consumption">
-            <%= lights.consumption + thermostat.consumption%>
+            <%= light.consumption + thermostat.consumption%>
         </span> Wh
     </p>
     <div>
         <span class="width-fifty">Světlo:</span>
-        <% if (lights.isOn) { %>
+        <% if (light.isOn) { %>
             <button class="radioBtn active" id="lightsOn" type="button">Zapnuto</button>
             <button class="radioBtn" id="lightsOff" type="button">Vypnuto</button>
         <% } else { %>

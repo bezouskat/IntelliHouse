@@ -1,4 +1,7 @@
 const Room = require("../models/room");
+const Light = require("../models/light");
+const Thermostat = require("../models/thermostat");
+
 const devicesApi = require('../scripts/devices-api');
 
 setInterval(devicesApi.updateAllDevices, 1000);
@@ -16,22 +19,23 @@ exports.room_list = function(req, res) {
 
 exports.room_detail = function(req, res) {
     Room.find({})
-    .then(rooms => {
+    .then((rooms) => {
         for (let room of rooms) {
             if (room._id.toString().localeCompare(req.params.id) == 0) {
-                let lights = null;
+                let light = null;
                 let thermostat = null;
 
-                devicesApi.getLights(room.lightsId)
-                .then(data => lights = data)
-                .then(() => devicesApi.getThermostat(room.thermostatId))
+                devicesApi.getLight(room.light)
+                .then(data => light = data)
+                .then(() => devicesApi.getThermostat(room.thermostat))
                 .then(data => thermostat = data)
                 .then(() => {
+
                     res.render("detail", {
                         rooms: rooms, 
                         selectedRoom: room,
                         thermostat: thermostat,
-                        lights: lights
+                        light: light
                     });
                 });
             }
@@ -41,21 +45,21 @@ exports.room_detail = function(req, res) {
 
 exports.room_detail_values = function(req, res) {
     Room.findOne({_id: req.params.id})
-    .then((room) => {
+    .then(room => {
         let temp = 0;
         let consumption = 0;
         
-        devicesApi.getLights(room.lightsId)
-        .then(lights => {
-            if (lights) {
-                consumption += Math.round(lights.consumption * lights.time / 60);
+        devicesApi.getLight(room.light)
+        .then(light => {
+            if (light) {
+                consumption += Math.round(light.consumption * light.time / 60);
             }
         })
-        .then(() => devicesApi.getThermostat(room.thermostatId))
+        .then(() => devicesApi.getThermostat(room.thermostat))
         .then(thermostat => {
             if (thermostat) {
-                temp = thermostat.currentTemp;
                 consumption += thermostat.consumption;
+                temp = thermostat.currentTemp;
             }
         })
         .then(() => {
@@ -74,18 +78,28 @@ exports.room_statistics = function(req, res) {
 };
 
 exports.room_create = function(req, res) {
-    let newLightsId = -1; 
+    let newLightId = -1; 
     let newThermostatId = -1;
 
-    devicesApi.newLights()
-    .then(id => newLightsId = id)
+    devicesApi.newLight()
+    .then(id => newLightId = id)
     .then(() => devicesApi.newThermostat())
     .then(id => newThermostatId = id)
     .then(() => {
+        const newLight = new Light({
+            _id: { valueOf: () => newLightId }
+        });
+        const newThermostat = new Thermostat({
+            _id: { valueOf: () => newThermostatId }
+        });
+
+        newLight.save();
+        newThermostat.save();
+
         Room.create({
             name: 'Nová místnost',
-            thermostatId: newThermostatId,
-            lightsId: newLightsId
+            light: newLight._id,
+            thermostat: newThermostat._id
         })
         .then(newRoom => {
             res.json({"id": newRoom._id.toString()});
@@ -96,8 +110,10 @@ exports.room_create = function(req, res) {
 exports.room_delete = function(req, res) {
     Room.findOne({_id: req.params.id})
     .then(room => {
-        devicesApi.deleteLights(room.lightsId)
-        .then(() => devicesApi.deleteThermostat(room.thermostatId))
+        devicesApi.deleteLight(room.light)
+        .then(() => devicesApi.deleteThermostat(room.thermostat))
+        .then(() => Light.deleteOne({_id: room.light}))
+        .then(() => Thermostat.deleteOne({_id: room.thermostat}))
         .then(() => Room.deleteOne(room))
         .then(() => res.sendStatus(200));
     });
@@ -106,24 +122,22 @@ exports.room_delete = function(req, res) {
 exports.room_update = function(req, res) {
     Room.findOne({_id: req.params.id})
     .then(room => {
-        const lightsId = room.lightsId;
-        const thermostatId = room.thermostatId;
         
         switch (req.body.type) {
             case "lightsOn": 
-                devicesApi.setLights(lightsId, true);  
+                devicesApi.setLight(room.light, true);  
                 break;
             case "lightsOff": 
-                devicesApi.setLights(lightsId, false); 
+                devicesApi.setLight(room.light, false); 
                 break; 
             case "thermostatOn": 
-                devicesApi.setThermostat(thermostatId, true); 
+                devicesApi.setThermostat(room.thermostat, true); 
                 break;
             case "thermostatOff": 
-                devicesApi.setThermostat(thermostatId, false);
+                devicesApi.setThermostat(room.thermostat, false);
                 break;
             case "setThermostatTemp":
-                devicesApi.setThermostatTemp(thermostatId, req.body.value);    
+                devicesApi.setThermostatTemp(room.thermostat, req.body.value);    
                 break;
             case "newName":
                 room.name = req.body.value;
