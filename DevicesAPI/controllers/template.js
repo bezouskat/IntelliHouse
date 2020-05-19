@@ -1,4 +1,4 @@
-const devicesRoutesBasicTemplate = (app, devicesName, readFile, writeFile) => {
+const devicesControllerBasicTemplate = (app, devicesName, readFile, writeFile) => {
 
     const dataPath = `./data/${devicesName}.json`;
 
@@ -78,4 +78,4 @@ const devicesRoutesBasicTemplate = (app, devicesName, readFile, writeFile) => {
     });
 };
 
-module.exports = devicesRoutesBasicTemplate;
+module.exports = devicesControllerBasicTemplate;

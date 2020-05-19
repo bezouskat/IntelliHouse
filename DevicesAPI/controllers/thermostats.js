@@ -1,4 +1,4 @@
-const thermostatsRoutes = (app, readFile, writeFile) => {
+const thermostatsController = (app, readFile, writeFile) => {
 
     const devicesName = 'thermostats';
     const dataPath = `./data/${devicesName}.json`;
@@ -48,7 +48,7 @@ const thermostatsRoutes = (app, readFile, writeFile) => {
             newCurrentTemp = heatingTemp;
         }
 
-        if (Math.random() < 0.2) {
+        if (Math.random() < 0.1) {
             newCurrentTemp += Math.random() < 0.5 ? -2 : 2;
         }
         else if (Math.random() < 0.5) {
@@ -102,9 +102,9 @@ const thermostatsRoutes = (app, readFile, writeFile) => {
         });
     });
 
-    const devicesRoutesBasicTemplate = require('./template.js');
+    const devicesControllerBasicTemplate = require('./template.js');
     
-    devicesRoutesBasicTemplate(app, devicesName, readFile, writeFile);
+    devicesControllerBasicTemplate(app, devicesName, readFile, writeFile);
 };
 
-module.exports = thermostatsRoutes;
+module.exports = thermostatsController;

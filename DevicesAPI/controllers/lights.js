@@ -1,4 +1,4 @@
-const lightsRoutes = (app, readFile, writeFile) => {
+const lightsController = (app, readFile, writeFile) => {
 
     const devicesName = 'lights';
     const dataPath = `./data/${devicesName}.json`;
@@ -72,9 +72,9 @@ const lightsRoutes = (app, readFile, writeFile) => {
         });
     });
 
-    const devicesRoutesBasicTemplate = require('./template.js');
+    const devicesControllerBasicTemplate = require('./template.js');
     
-    devicesRoutesBasicTemplate(app, devicesName, readFile, writeFile);
+    devicesControllerBasicTemplate(app, devicesName, readFile, writeFile);
 };
 
-module.exports = lightsRoutes;
+module.exports = lightsController;

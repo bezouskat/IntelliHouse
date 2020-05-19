@@ -12,7 +12,7 @@ mongoose.connect("mongodb://localhost/SWINZ", {
 });
 mongoose.set('useFindAndModify', false);
 
-const room_controller = require("./controllers/roomController");
+const room_controller = require("./controllers/room");
 
 app.get("/", room_controller.index);
 

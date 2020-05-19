@@ -25,11 +25,11 @@ const writeFile = (filePath, fileData, res, callback) => {
     });
 };
 
-const thermostatsRoutes = require('./routes/thermostats.js');
-const lightsRoutes      = require('./routes/lights.js');
+const lightsController      = require('./controllers/lights.js');
+const thermostatsController = require('./controllers/thermostats.js');
 
-thermostatsRoutes(app, readFile, writeFile);
-lightsRoutes(app, readFile, writeFile);
+lightsController(app, readFile, writeFile);
+thermostatsController(app, readFile, writeFile);
 
 const server = app.listen(3001, () => {
     console.log('Listening on port: ' + server.address().port);
