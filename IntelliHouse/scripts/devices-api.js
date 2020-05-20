@@ -1,6 +1,6 @@
 const fetch = require("node-fetch");
 
-function newLight() {
+exports.newLight = function() {
     return fetch("http://localhost:3001/lights", {
         method: "POST",
         headers: {
@@ -16,9 +16,7 @@ function newLight() {
     .then(data => data.id);
 }
 
-exports.newLight = newLight;
-
-function newThermostat() {
+exports.newThermostat = function() {
     return fetch("http://localhost:3001/thermostats", {
         method: "POST",
         headers: {
@@ -35,9 +33,7 @@ function newThermostat() {
     .then(data => data.id);
 }
 
-exports.newThermostat = newThermostat;
-
-function getLight(id) {
+exports.getLight = function(id) {
     return fetch(`http://localhost:3001/lights/${id}`, {
         method: "GET"
     })
@@ -45,9 +41,7 @@ function getLight(id) {
     .catch(err => console.log('Failed to find the lights.'));
 }
 
-exports.getLight = getLight;
-
-function getThermostat(id) {
+exports.getThermostat = function(id) {
     return fetch(`http://localhost:3001/thermostats/${id}`, {
         method: "GET"
     })
@@ -55,25 +49,19 @@ function getThermostat(id) {
     .catch(err => console.log('Failed to find the thermostat.'));
 }
 
-exports.getThermostat = getThermostat;
-
-function deleteLight(id) {
+exports.deleteLight = function(id) {
     return fetch(`http://localhost:3001/lights/${id}`, {
         method: "DELETE"
     });
 }
 
-exports.deleteLight = deleteLight;
-
-function deleteThermostat(id) {
+exports.deleteThermostat = function(id) {
     return fetch(`http://localhost:3001/thermostats/${id}`, {
         method: "DELETE"
     });
 }
 
-exports.deleteThermostat = deleteThermostat;
-
-function setLight(id, ison) {
+exports.setLight = function(id, ison) {
     return fetch(`http://localhost:3001/lights/${id}/ison`, {
         method: "PUT",
         headers: {
@@ -85,9 +73,7 @@ function setLight(id, ison) {
     });
 }
 
-exports.setLight = setLight;
-
-function setThermostat(id, ison) {
+exports.setThermostat = function(id, ison) {
     return fetch(`http://localhost:3001/thermostats/${id}/ison`, {
         method: "PUT",
         headers: {
@@ -99,9 +85,7 @@ function setThermostat(id, ison) {
     });
 }
 
-exports.setThermostat = setThermostat;
-
-function setThermostatTemp(id, temp) {
+exports.setThermostatTemp = function(id, temp) {
     return fetch(`http://localhost:3001/thermostats/${id}/heatingtemp`, {
         method: "PUT",
         headers: {
@@ -113,15 +97,14 @@ function setThermostatTemp(id, temp) {
     });
 }
 
-exports.setThermostatTemp = setThermostatTemp;
-
-function updateAllDevices() {
-    return fetch(`http://localhost:3001/lights`, {
-        method: "PUT"
-    })
-    .then(() => fetch(`http://localhost:3001/thermostats`, {
-        method: "PUT"
-    }));
+exports.updateDevices = function() {
+    return new Promise((resolve, reject) => {
+        fetch(`http://localhost:3001/lights`, {
+            method: "PUT"
+        })
+        .then(() => fetch(`http://localhost:3001/thermostats`, {
+                method: "PUT"
+        })
+        .then(() => resolve()));
+    });
 }
-
-exports.updateAllDevices = updateAllDevices;

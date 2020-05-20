@@ -4,7 +4,7 @@ const Thermostat = require("../models/thermostat");
 
 const devicesApi = require('../scripts/devices-api');
 
-setInterval(devicesApi.updateAllDevices, 1000);
+setInterval(devicesApi.updateDevices, 1000);
 
 exports.index = function(req, res) {
     res.render("index");
