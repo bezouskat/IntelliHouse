@@ -37,16 +37,14 @@ exports.getLight = function(id) {
     return fetch(`http://localhost:3001/lights/${id}`, {
         method: "GET"
     })
-    .then(res => res.json())
-    .catch(err => console.log('Failed to find the lights.'));
+    .then(res => res.json());
 }
 
 exports.getThermostat = function(id) {
     return fetch(`http://localhost:3001/thermostats/${id}`, {
         method: "GET"
     })
-    .then(res => res.json())
-    .catch(err => console.log('Failed to find the thermostat.'));
+    .then(res => res.json());
 }
 
 exports.deleteLight = function(id) {
@@ -97,14 +95,24 @@ exports.setThermostatTemp = function(id, temp) {
     });
 }
 
+updateLights = function() {
+    return fetch(`http://localhost:3001/lights`, {
+        method: "PUT"
+    });
+}
+
+updateThermostats = function() {
+    return fetch(`http://localhost:3001/thermostats`, {
+        method: "PUT"
+    });
+}
+
 exports.updateDevices = function() {
-    return new Promise((resolve, reject) => {
-        fetch(`http://localhost:3001/lights`, {
-            method: "PUT"
-        })
-        .then(() => fetch(`http://localhost:3001/thermostats`, {
-                method: "PUT"
-        })
-        .then(() => resolve()));
+    return new Promise(resolve => {
+        Promise.all([
+            updateLights(),
+            updateThermostats()
+        ])
+        .then(resolve);
     });
 }

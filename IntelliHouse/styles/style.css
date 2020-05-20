@@ -16,10 +16,8 @@ body {
     margin: 0 auto;
     padding: 0;
     width: var(--body-width);
-    overflow-x: hidden;
     line-height: 1.5;
     color: var(--main-color);
-    overflow: hidden;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 h2 {
@@ -198,6 +196,7 @@ h2 {
     appearance: none;
     width: 25px;
     height: 25px;
+    border: none;
     border-radius: 50%; 
     background: var(--secondary-color);
     cursor: pointer;

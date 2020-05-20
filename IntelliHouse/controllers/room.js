@@ -21,23 +21,19 @@ exports.room_detail = function(req, res) {
     Room.find({})
     .then((rooms) => {
         for (let room of rooms) {
-            if (room._id.toString().localeCompare(req.params.id) == 0) {
-                let light = null;
-                let thermostat = null;
-
-                devicesApi.getLight(room.light)
-                .then(data => light = data)
-                .then(() => devicesApi.getThermostat(room.thermostat))
-                .then(data => thermostat = data)
-                .then(() => {
-
+            if (room._id.toString().localeCompare(req.params.id) == 0) { 
+                Promise.all([
+                    devicesApi.getLight(room.light),
+                    devicesApi.getThermostat(room.thermostat)
+                ])
+                .then(devices => {
                     res.render("detail", {
                         rooms: rooms, 
                         selectedRoom: room,
-                        thermostat: thermostat,
-                        light: light
-                    });
-                });
+                        light: devices[0],
+                        thermostat: devices[1]
+                    })
+                })
             }
         }
     });
@@ -46,25 +42,22 @@ exports.room_detail = function(req, res) {
 exports.room_detail_values = function(req, res) {
     Room.findOne({_id: req.params.id})
     .then(room => {
-        let temp = 0;
-        let consumption = 0;
-        
-        devicesApi.getLight(room.light)
-        .then(light => {
-            if (light) {
-                consumption += Math.round(light.consumption * light.time / 60);
+        Promise.all([
+            devicesApi.getLight(room.light),
+            devicesApi.getThermostat(room.thermostat)
+        ])
+        .then(devices => {
+            if (devices[0] && devices[1]) {
+                const consumption = 
+                    Math.round(devices[0].consumption * devices[0].time / 60)
+                    + devices[1].consumption;
+
+                const temp = devices[1].currentTemp;
+                
+                res.json({"temp": temp, "consumption": consumption});
             }
-        })
-        .then(() => devicesApi.getThermostat(room.thermostat))
-        .then(thermostat => {
-            if (thermostat) {
-                consumption += thermostat.consumption;
-                temp = thermostat.currentTemp;
-            }
-        })
-        .then(() => {
-            res.json({"temp": temp, "consumption": consumption});
         });
+        
     });
 };
 
