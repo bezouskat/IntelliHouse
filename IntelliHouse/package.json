@@ -1,19 +1,25 @@
 {
-  "name": "swinz",
+  "name": "intellihouse",
   "version": "1.0.0",
-  "description": "",
+  "description": "app for managing a smart house",
   "main": "app.js",
   "scripts": {
-    "test": "mocha"
+    "start": "node server.js",
+    "test": "mocha --exit --recursive --timeout 10000"
   },
   "author": "TB, MH",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.19.0",
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
+    "config": "^3.3.1",
     "ejs": "^3.0.1",
     "express": "^4.17.1",
+    "mocha": "^8.0.1",
+    "mockgoose": "^8.0.4",
     "mongoose": "^5.9.5",
-    "node-fetch": "^2.6.0"
-  },
-  "devDependencies": {}
+    "node-fetch": "^2.6.0",
+    "supertest": "^4.0.2"
+  }
 }

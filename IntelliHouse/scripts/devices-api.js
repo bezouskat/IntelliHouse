@@ -1,7 +1,9 @@
 const fetch = require("node-fetch");
 
+const API_URL = 'http://localhost:3000';
+
 exports.newLight = function() {
-    return fetch("http://localhost:3001/lights", {
+    return fetch(API_URL + "/lights", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -17,7 +19,7 @@ exports.newLight = function() {
 }
 
 exports.newThermostat = function() {
-    return fetch("http://localhost:3001/thermostats", {
+    return fetch(API_URL + "/thermostats", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -34,33 +36,33 @@ exports.newThermostat = function() {
 }
 
 exports.getLight = function(id) {
-    return fetch(`http://localhost:3001/lights/${id}`, {
+    return fetch(API_URL + `/lights/${id}`, {
         method: "GET"
     })
     .then(res => res.json());
 }
 
 exports.getThermostat = function(id) {
-    return fetch(`http://localhost:3001/thermostats/${id}`, {
+    return fetch(API_URL + `/thermostats/${id}`, {
         method: "GET"
     })
     .then(res => res.json());
 }
 
 exports.deleteLight = function(id) {
-    return fetch(`http://localhost:3001/lights/${id}`, {
+    return fetch(API_URL + `/lights/${id}`, {
         method: "DELETE"
     });
 }
 
 exports.deleteThermostat = function(id) {
-    return fetch(`http://localhost:3001/thermostats/${id}`, {
+    return fetch(API_URL + `/thermostats/${id}`, {
         method: "DELETE"
     });
 }
 
 exports.setLight = function(id, ison) {
-    return fetch(`http://localhost:3001/lights/${id}/ison`, {
+    return fetch(API_URL + `/lights/${id}/ison`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json"
@@ -72,7 +74,7 @@ exports.setLight = function(id, ison) {
 }
 
 exports.setThermostat = function(id, ison) {
-    return fetch(`http://localhost:3001/thermostats/${id}/ison`, {
+    return fetch(API_URL + `/thermostats/${id}/ison`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json"
@@ -84,7 +86,7 @@ exports.setThermostat = function(id, ison) {
 }
 
 exports.setThermostatTemp = function(id, temp) {
-    return fetch(`http://localhost:3001/thermostats/${id}/heatingtemp`, {
+    return fetch(API_URL + `/thermostats/${id}/heatingtemp`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json"
@@ -96,13 +98,13 @@ exports.setThermostatTemp = function(id, temp) {
 }
 
 updateLights = function() {
-    return fetch(`http://localhost:3001/lights`, {
+    return fetch(API_URL + `/lights`, {
         method: "PUT"
     });
 }
 
 updateThermostats = function() {
-    return fetch(`http://localhost:3001/thermostats`, {
+    return fetch(API_URL + `/thermostats`, {
         method: "PUT"
     });
 }

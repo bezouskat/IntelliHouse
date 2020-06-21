@@ -31,6 +31,6 @@ const thermostatsController = require('./controllers/thermostats.js');
 lightsController(app, readFile, writeFile);
 thermostatsController(app, readFile, writeFile);
 
-const server = app.listen(3001, () => {
+const server = app.listen(3000, () => {
     console.log('Listening on port: ' + server.address().port);
 });

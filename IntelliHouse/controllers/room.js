@@ -33,7 +33,7 @@ exports.room_detail = function(req, res) {
                         light: devices[0],
                         thermostat: devices[1]
                     })
-                })
+                });
             }
         }
     });
@@ -96,7 +96,7 @@ exports.room_create = function(req, res) {
         })
         .then(newRoom => {
             res.json({"id": newRoom._id.toString()});
-        })
+        });
     });
 };
 

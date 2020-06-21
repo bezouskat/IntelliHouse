@@ -1,16 +1,10 @@
 const express = require("express");
-const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 
 const app = express();
 app.set("view engine", "ejs");
 app.use(bodyParser.json());
 app.use(express.static(__dirname));
-
-mongoose.connect("mongodb://localhost/IntelliHouse", {
-    useNewUrlParser: true, useUnifiedTopology: true
-});
-mongoose.set('useFindAndModify', false);
 
 const room_controller = require("./controllers/room");
 
@@ -30,6 +24,4 @@ app.delete("/rooms/:id", room_controller.room_delete);
 
 app.put("/rooms/:id", room_controller.room_update);
 
-app.listen(8000, () => {
-    console.log("Listening on port 8000...");
-});
+module.exports = app;
