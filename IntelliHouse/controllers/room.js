@@ -3,6 +3,7 @@ const Light = require("../models/light");
 const Thermostat = require("../models/thermostat");
 
 const devicesApi = require('../scripts/devices-api');
+const mongoose = require("mongoose");
 
 setInterval(devicesApi.updateDevices, 1000);
 
@@ -14,12 +15,13 @@ exports.room_list = function(req, res) {
     Room.find({})
     .then(rooms => {
         res.render("rooms", {rooms: rooms})
-    });
+    })
+    .catch(err => console.log(err));
 };
 
 exports.room_detail = function(req, res) {
     Room.find({})
-    .then((rooms) => {
+    .then(rooms => {
         for (let room of rooms) {
             if (room._id.toString().localeCompare(req.params.id) == 0) { 
                 Promise.all([
@@ -32,14 +34,18 @@ exports.room_detail = function(req, res) {
                         selectedRoom: room,
                         light: devices[0],
                         thermostat: devices[1]
-                    })
+                    });
                 });
+                
+                return;
             }
         }
-    });
+        res.sendStatus(404);
+    })
+    .catch(err => console.log(err));
 };
 
-exports.room_detail_values = function(req, res) {
+exports.room_detail_values = function(req, res) {       
     Room.findOne({_id: req.params.id})
     .then(room => {
         Promise.all([
@@ -57,8 +63,8 @@ exports.room_detail_values = function(req, res) {
                 res.json({"temp": temp, "consumption": consumption});
             }
         });
-        
-    });
+    })
+    .catch(err => console.log(err));
 };
 
 exports.room_statistics = function(req, res) {
@@ -118,11 +124,11 @@ exports.room_update = function(req, res) {
         
         switch (req.body.type) {
             case "lightsOn": 
-                devicesApi.setLight(room.light, true);  
-                break;
+                devicesApi.setLight(room.light, true);
+                break; 
             case "lightsOff": 
                 devicesApi.setLight(room.light, false); 
-                break; 
+                break;
             case "thermostatOn": 
                 devicesApi.setThermostat(room.thermostat, true); 
                 break;
@@ -136,7 +142,7 @@ exports.room_update = function(req, res) {
                 room.name = req.body.value;
                 room.save();
                 break;
-            }
+        }
 
         res.sendStatus(200);
     });

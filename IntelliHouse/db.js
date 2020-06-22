@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const DB_URI = 'mongodb://localhost/IntelliHouse2';
+const DB_URI = 'mongodb://localhost/IntelliHouse';
 
 function mongo(resolve, reject) {
     mongoose.connect(DB_URI, {
