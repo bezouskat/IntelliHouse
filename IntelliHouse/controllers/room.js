@@ -3,9 +3,10 @@ const Light = require("../models/light");
 const Thermostat = require("../models/thermostat");
 
 const devicesApi = require('../scripts/devices-api');
-const mongoose = require("mongoose");
 
-setInterval(devicesApi.updateDevices, 1000);
+if (process.env.NODE_ENV != 'test') {
+    setInterval(devicesApi.updateDevices, 1000);
+} 
 
 exports.index = function(req, res) {
     res.render("index");
@@ -35,6 +36,10 @@ exports.room_detail = function(req, res) {
                         light: devices[0],
                         thermostat: devices[1]
                     });
+                })
+                .catch(err => {
+                    console.log("Rendering detail failed");
+                    res.sendStatus(404);
                 });
                 
                 return;
@@ -62,6 +67,10 @@ exports.room_detail_values = function(req, res) {
                 
                 res.json({"temp": temp, "consumption": consumption});
             }
+        })
+        .catch(err => {
+            console.log("Getting devices values for client failed");
+            res.sendStatus(404);
         });
     })
     .catch(err => console.log(err));

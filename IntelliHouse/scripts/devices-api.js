@@ -15,7 +15,8 @@ exports.newLight = function() {
         })
     })
     .then(res => res.json())
-    .then(data => data.id);
+    .then(data => data.id)
+    .catch(err => console.log("API - Creating a new light failed"));
 }
 
 exports.newThermostat = function() {
@@ -32,7 +33,8 @@ exports.newThermostat = function() {
         })
     })
     .then(res => res.json())
-    .then(data => data.id);
+    .then(data => data.id)
+    .catch(err => console.log("API - Creating a new thermostat failed"));
 }
 
 exports.getLight = function(id) {
@@ -52,13 +54,15 @@ exports.getThermostat = function(id) {
 exports.deleteLight = function(id) {
     return fetch(API_URL + `/lights/${id}`, {
         method: "DELETE"
-    });
+    })
+    .catch(err => console.log("API - Deleting a light failed"));
 }
 
 exports.deleteThermostat = function(id) {
     return fetch(API_URL + `/thermostats/${id}`, {
         method: "DELETE"
-    });
+    })
+    .catch(err => console.log("API - Deleting a thermostat failed"));
 }
 
 exports.setLight = function(id, ison) {
@@ -70,7 +74,8 @@ exports.setLight = function(id, ison) {
         body: JSON.stringify({
             isOn: ison
         })
-    });
+    })
+    .catch(err => console.log("API - Turning a light on/off failed"));
 }
 
 exports.setThermostat = function(id, ison) {
@@ -82,7 +87,8 @@ exports.setThermostat = function(id, ison) {
         body: JSON.stringify({
             isOn: ison
         })
-    });
+    })
+    .catch(err => console.log("API - Turning a thermostat on/off failed"));
 }
 
 exports.setThermostatTemp = function(id, temp) {
@@ -94,7 +100,8 @@ exports.setThermostatTemp = function(id, temp) {
         body: JSON.stringify({
             heatingTemp: temp
         })
-    });
+    })
+    .catch(err => console.log("API - Setting thermostat's heating temp failed"));
 }
 
 updateLights = function() {
@@ -115,6 +122,7 @@ exports.updateDevices = function() {
             updateLights(),
             updateThermostats()
         ])
-        .then(resolve);
+        .then(resolve)
+        .catch(err => console.log("API - Updating devices for simulation failed"));
     });
 }

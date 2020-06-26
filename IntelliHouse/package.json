@@ -4,8 +4,8 @@
   "description": "app for managing a smart house",
   "main": "app.js",
   "scripts": {
-    "start": "node server.js",
-    "test": "mocha --exit --recursive --timeout 10000"
+    "start": "nodemon server.js",
+    "test": "mocha --exit --recursive --timeout 5000"
   },
   "author": "TB, MH",
   "license": "ISC",

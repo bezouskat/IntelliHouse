@@ -10,7 +10,8 @@ function setLights(type) {
         body: JSON.stringify({
             type: type
         })
-    });
+    })
+    .catch(err => console.log("Turning a light on/off failed"));
 }
 
 lightsOn.addEventListener("click", () => {
@@ -46,7 +47,8 @@ function setThermostat(type) {
         body: JSON.stringify({
             type: type
         })
-    });
+    })
+    .catch(err => console.log("Turning a thermostat on/off failed"));
 }
 
 heatingOn.addEventListener("click", () => {
@@ -83,7 +85,8 @@ function setThermostatTemp(value) {
             type: "setThermostatTemp",
             value: value
         })
-    });
+    })
+    .catch(err => console.log("Setting a thermostat's heating temp failed"));
 }
 
 heatingSlider.addEventListener("mouseup", () => {
@@ -107,7 +110,8 @@ renameRoom.addEventListener("click", () => {
                 value: name
             })
         })
-        .then(() => window.location.replace(window.location.pathname));
+        .then(() => window.location.replace(window.location.pathname))
+        .catch(err => console.log("Renaming a room failed"));
     } else {
         alert("Pole pro název je prázdné.");
     }
@@ -123,7 +127,8 @@ addRoom.addEventListener("click", () => {
     .then(res => res.json())
     .then(data => {
         window.location.replace("/rooms/" + data.id);
-    });
+    })
+    .catch(err => console.log("Creating a new room failed"));
 });
 
 delRoom.addEventListener("click", () => {
@@ -133,7 +138,8 @@ delRoom.addEventListener("click", () => {
         fetch(window.location.pathname, {
             method: "DELETE",
         })
-        .then(() => window.location.replace("/rooms"));
+        .then(() => window.location.replace("/rooms"))
+        .catch(err => console.log("Deleting a room failed"));
     }
 });
 
@@ -143,6 +149,8 @@ let temp = document.getElementById("temp");
 let consumption = document.getElementById("consumption");
 
 function updateValues() {
+    console.log(window.location.pathname);
+    
     fetch(window.location.pathname + "/values", {
         method: "GET"
     })
@@ -151,5 +159,5 @@ function updateValues() {
         temp.innerHTML = values.temp;
         consumption.innerHTML = values.consumption;
     })
-    .catch(err => clearInterval(update));
+    .catch(err => console.log("UpdateValues failed - IntelliHouse turned off"));
 }
